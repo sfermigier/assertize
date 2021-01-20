@@ -4,15 +4,13 @@ import sys
 
 import libcst as cst
 import libcst.matchers as m
-# from devtools import debug
 
 
 class TestTransformer(m.MatcherDecoratableTransformer):
     def leave_Call(
-        self, original_node: cst.Call, updated_node: cst.Call
-    ) -> cst.CSTNode:
+        self, original_node: cst.Call, updated_node: cst.BaseExpression
+    ) -> cst.BaseExpression:
         call = original_node
-        func = call.func
         args = call.args
 
         matchers = [
