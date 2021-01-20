@@ -68,7 +68,7 @@ lint-all: lint lint-mypy
 lint-py:
 	@echo "--> Linting Python files /w flake8"
 	flake8 src tests
-	# mypy src tests
+	mypy src tests
 	@echo ""
 
 #
@@ -100,6 +100,8 @@ tidy: clean
 update-deps:
 	pip install -U pip setuptools wheel
 	poetry update
+	dephell deps convert --from=pyproject.toml --to=setup.py
+	black setup.py
 
 publish: clean
 	git push --tags
