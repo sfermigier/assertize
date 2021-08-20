@@ -16,6 +16,7 @@ class TestTransformer(m.MatcherDecoratableTransformer):
         args = call.args
 
         matchers: List[Tuple[m.Call, int, Callable]] = [
+            # assertEqual
             (
                 m.Call(
                     func=m.Attribute(value=m.Name("self"), attr=m.Name("assertEqual"))
@@ -28,6 +29,20 @@ class TestTransformer(m.MatcherDecoratableTransformer):
                     )
                 ),
             ),
+            (
+                m.Call(
+                    func=m.Attribute(value=m.Name("self"), attr=m.Name("assertEqual"))
+                ),
+                3,
+                lambda: cst.Assert(
+                    cst.Comparison(
+                        args[0].value,
+                        [cst.ComparisonTarget(cst.Equal(), args[1].value)],
+                    ),
+                    args[2].value,
+                ),
+            ),
+            # assertNotEqual
             (
                 m.Call(
                     func=m.Attribute(
@@ -44,11 +59,35 @@ class TestTransformer(m.MatcherDecoratableTransformer):
             ),
             (
                 m.Call(
+                    func=m.Attribute(
+                        value=m.Name("self"), attr=m.Name("assertNotEqual")
+                    )
+                ),
+                3,
+                lambda: cst.Assert(
+                    cst.Comparison(
+                        args[0].value,
+                        [cst.ComparisonTarget(cst.NotEqual(), args[1].value)],
+                    ),
+                    args[2].value,
+                ),
+            ),
+            # assertTrue
+            (
+                m.Call(
                     func=m.Attribute(value=m.Name("self"), attr=m.Name("assertTrue"))
                 ),
                 1,
                 lambda: cst.Assert(args[0].value),
             ),
+            (
+                m.Call(
+                    func=m.Attribute(value=m.Name("self"), attr=m.Name("assertTrue"))
+                ),
+                2,
+                lambda: cst.Assert(args[0].value, args[1].value),
+            ),
+            # assertIsNone
             (
                 m.Call(
                     func=m.Attribute(value=m.Name("self"), attr=m.Name("assertIsNone"))
@@ -61,6 +100,20 @@ class TestTransformer(m.MatcherDecoratableTransformer):
                     )
                 ),
             ),
+            (
+                m.Call(
+                    func=m.Attribute(value=m.Name("self"), attr=m.Name("assertIsNone"))
+                ),
+                2,
+                lambda: cst.Assert(
+                    cst.Comparison(
+                        args[0].value,
+                        [cst.ComparisonTarget(cst.Is(), cst.Name("None"))],
+                    ),
+                    args[1].value,
+                ),
+            ),
+            # assertIsNotNone
             (
                 m.Call(
                     func=m.Attribute(
@@ -77,6 +130,25 @@ class TestTransformer(m.MatcherDecoratableTransformer):
                             )
                         ],
                     )
+                ),
+            ),
+            (
+                m.Call(
+                    func=m.Attribute(
+                        value=m.Name("self"), attr=m.Name("assertIsNotNone")
+                    )
+                ),
+                2,
+                lambda: cst.Assert(
+                    cst.Comparison(
+                        args[0].value,
+                        [
+                            cst.ComparisonTarget(
+                                cst.Is(), cst.parse_expression("not None")
+                            )
+                        ],
+                    ),
+                    args[1].value,
                 ),
             ),
         ]

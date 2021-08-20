@@ -1,15 +1,21 @@
 [tool.poetry]
 name = "assertize"
-version = "0.1.0"
+version = "0.2.0"
 description = "Convert `self.assertSomething(...)` to `assert something`."
 authors = ["Stefane Fermigier <sf@fermigier.com>"]
 license = "GPL"
 
 packages = [{ include = "*", from = "src" }]
 
+
+[tool.poetry.scripts]
+assertize = 'assertize:main'
+
+
 [tool.poetry.dependencies]
 python = "^3.7"
 libcst = "*"
+
 
 [tool.poetry.dev-dependencies]
 # Testing
@@ -43,7 +49,3 @@ devtools = "^0.6.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-
-[tool.poetry.scripts]
-assertize = 'assertize:main'
